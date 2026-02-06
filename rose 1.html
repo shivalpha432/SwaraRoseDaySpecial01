@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love, Swara 🌹</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 400px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #d63384;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            background-color: #ff6b81;
+        }
+
+        /* Screen Utility */
+        .screen {
+            display: none;
+            animation: fadeIn 0.8s;
+        }
+
+        .active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Rose Game Styles */
+        .rose-container {
+            height: 200px;
+            position: relative;
+            margin-bottom: 20px;
+            border: 2px dashed #ffccd5;
+            border-radius: 10px;
+            background: #fff0f3;
+        }
+
+        .scattered-rose {
+            font-size: 30px;
+            position: absolute;
+            cursor: pointer;
+            animation: float 2s infinite ease-in-out alternate;
+            user-select: none;
+        }
+
+        /* Tricky Button Area */
+        .button-box {
+            position: relative;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #noBtn {
+            position: absolute; /* Allows movement */
+            background-color: #a4b0be;
+        }
+
+        /* Falling Petals Background */
+        .petal {
+            position: absolute;
+            background-color: #ff4757;
+            width: 15px;
+            height: 15px;
+            border-radius: 15px 0 15px 0;
+            opacity: 0.8;
+            animation: fall linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .final-rose {
+            font-size: 80px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Falling Petals Background -->
+    <div id="petals-container"></div>
+
+    <div class="container">
+        <!-- Screen 1: Welcome -->
+        <div id="screen1" class="screen active">
+            <h1>Hey Swara! ❤️</h1>
+            <p>I have a special surprise for you. Are you ready?</p>
+            <button class="btn" onclick="goToScreen(2)">Open Surprise</button>
+        </div>
+
+        <!-- Screen 2: The Task -->
+        <div id="screen2" class="screen">
+            <h1>Task for my Cutie</h1>
+            <p>Help me make a bouquet! <br><strong>Collect 5 Roses</strong> by clicking them!</p>
+            <div class="rose-container" id="gameArea">
+                <!-- Roses will appear here via JS -->
+            </div>
+            <p id="score">Roses Collected: 0/5</p>
+        </div>
+
+        <!-- Screen 3: The Question -->
+        <div id="screen3" class="screen">
+            <h1>One Question...</h1>
+            <p>Will you accept my love and this Rose? 🌹</p>
+            <div class="button-box">
+                <button class="btn" onclick="goToScreen(4)">YES! 😍</button>
+                <button class="btn" id="noBtn" onmouseover="moveButton()">No 🙈</button>
+            </div>
+        </div>
+
+        <!-- Screen 4: Final Message -->
+        <div id="screen4" class="screen">
+            <div class="final-rose">💐</div>
+            <h1>Happy Rose Day!</h1>
+            <p>To my beautiful Swara,</p>
+            <p>Just like a rose, you bring beauty and fragrance into my life. I love you so much! ❤️</p>
+            <p style="font-size: 0.8rem; color: #888;">(Forever yours)</p>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+
+        // Navigation Function
+        function goToScreen(screenNumber) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen' + screenNumber).classList.add('active');
+
+            if (screenNumber === 2) {
+                startGame();
+            }
+        }
+
+        // Screen 2: Rose Game Logic
+        function startGame() {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = ''; // Clear existing
+            score = 0;
+            document.getElementById('score').innerText = `Roses Collected: 0/5`;
+
+            for (let i = 0; i < 5; i++) {
+                createRose(gameArea);
+            }
+        }
+
+        function createRose(area) {
+            const rose = document.createElement('div');
+            rose.innerText = '🌹';
+            rose.classList.add('scattered-rose');
+            
+            // Random Position
+            const x = Math.random() * (area.offsetWidth - 40);
+            const y = Math.random() * (area.offsetHeight - 40);
+            
+            rose.style.left = `${x}px`;
+            rose.style.top = `${y}px`;
+
+            rose.onclick = function() {
+                score++;
+                document.getElementById('score').innerText = `Roses Collected: ${score}/5`;
+                rose.remove(); // Remove collected rose
+                
+                if (score === 5) {
+                    setTimeout(() => {
+                        goToScreen(3);
+                    }, 500);
+                }
+            };
+
+            area.appendChild(rose);
+        }
+
+        // Screen 3: Running Button Logic
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            const x = Math.random() * 200 - 100; // Move left/right
+            const y = Math.random() * 200 - 100; // Move up/down
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        // Background Petals Logic
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.getElementById('petals-container').appendChild(petal);
+
+            setTimeout(() => {
+                petal.remove();
+            }, 5000);
+        }
+
+        setInterval(createPetal, 300);
+
+    </script>
+</body>
+</html>
